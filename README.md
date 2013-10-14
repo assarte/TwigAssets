@@ -42,3 +42,32 @@ How to minify
 -------------
 
 You should use the Extension's `minify` option to indicate if you want to minify your asset-collections (`true`) or not (`false`). If you indicates that you want to use minifing you must setup a minifier-callback by the `minifier_callback` option. The minifier callback must have two arguments: `string $content, string $type`. This callback must returns the minified version of the passed `$content`'s content.
+An example of usage:
+```php
+$env->addExtension(
+	new \Assarte_TwigAssets_Extension_Assets(array(
+		...,
+		'minifing'			=> true,
+		'minifier_callback'	=> function($content, $type) {
+			switch ($type) {
+				default: {
+					throw new RuntimeException('Invalid asset minifier type: '.$type);
+					break;
+				}
+				case 'js': {
+					$result = JSMinPlus::minify($content);
+					return $result;
+				}
+				case 'css': {
+					$minifier = new CSSmin();
+					$result = $minifier->run($content);
+					return $result;
+				}
+			}
+		}
+	))
+);
+```
+It's simple as hell. Anyway, you can grab these libs with ease:
+ * JSMinPlus: https://github.com/mrclay/minify/blob/master/min/lib/JSMinPlus.php
+ * CSSmin: https://github.com/mrclay/minify/blob/master/min/lib/CSSmin.php
