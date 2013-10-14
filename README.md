@@ -3,6 +3,19 @@ TwigAssets
 
 Implements an on-the-fly asset manager for Twig
 
+How you help me
+---------------
+
+Feel free to use my extension, I hope that you may enjoy that and may help you on your better efficiency. Well, you should donate me some credits via PayPal if my help counts for you on your work:
+
+<a href="https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=5KQ66J5DF97RA">
+<img src="https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif" border="0" name="submit" alt="PayPal - The safer, easier way to pay online!">
+</a>
+
+...or give me some positive feedback on my e-mail adress (you can see that in my profile).
+
+Thanks anyway!
+
 How it works
 ------------
 
