@@ -45,7 +45,7 @@ You should use the Extension's `minify` option to indicate if you want to minify
 An example of usage:
 ```php
 $env->addExtension(
-	new \Assarte_TwigAssets_Extension_Assets(array(
+	new Assarte_TwigAssets_Extension_Assets(array(
 		...,
 		'minifing'			=> true,
 		'minifier_callback'	=> function($content, $type) {
