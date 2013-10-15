@@ -246,11 +246,16 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 				$assetName = $this->namespace.$collection->getGeneratedName();
 				$assetType = $collection->getType();
 				$assetBuild = $collection->renderAssets();
-				if ($this->minifing) {
+				
+				// respecting the 'no_minify' option of the 'asset_build' tag
+				if ($this->minifing and $collection->isMinifiable()) {
 					$assetBuild = call_user_func($this->minifierCallback, $assetBuild, $assetType);
 				}
 				
-				$this->storage->store($assetName.'.'.$assetType, $assetBuild);
+				// respecting the 'rebuild' option of the Extension
+				if ($this->rebuild or !$this->getEnvironment()->getLoader()->exists($assetName.'.'.$assetType)) {
+					$this->storage->store($assetName.'.'.$assetType, $assetBuild);
+				}
 				
 				$assetPath = $this->storage->getAccessPath();
 				if ($assetPath !== false) {

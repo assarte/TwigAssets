@@ -35,7 +35,7 @@ class Assarte_TwigAssets_Node_AssetBuilder extends Twig_Node
 				->subcompile($this->getNode('collection'))
 			->raw(')->createPlaceholder()->setType(')
 				->subcompile($this->getNode('as'))
-			->raw(')->getPlaceholder();'."\n")
+			->raw(')->setMinifiable('.($this->noMinify? 'false' : 'true').')->getPlaceholder();'."\n")
 		;
 	}
 }

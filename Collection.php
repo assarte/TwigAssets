@@ -26,6 +26,11 @@ class Assarte_TwigAssets_Collection
 	 */
 	protected $type = '';
 	
+	/**
+	 * @var bool
+	 */
+	protected $minifiable = true;
+	
 	public function __construct(Assarte_TwigAssets_Extension_Assets $extension)
 	{
 		$this->extension = $extension;
@@ -85,6 +90,23 @@ class Assarte_TwigAssets_Collection
 	public function getType()
 	{
 		return $this->type;
+	}
+	
+	/**
+	 * @return Assarte_TwigAssets_Collection this
+	 */
+	public function setMinifiable($minifiable)
+	{
+		$this->minifiable = (bool)$minifiable;
+		return $this;
+	}
+	
+	/**
+	 * @return bool
+	 */
+	public function isMinifiable()
+	{
+		return $this->minifiable;
 	}
 	
 	/**
