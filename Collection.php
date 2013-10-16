@@ -37,6 +37,14 @@ class Assarte_TwigAssets_Collection
 	}
 	
 	/**
+	 * @return int
+	 */
+	public function getCount()
+	{
+		return count($this->assets);
+	}
+	
+	/**
 	 * @param string $asset
 	 * @return Assarte_TwigAssets_Collection this
 	 */

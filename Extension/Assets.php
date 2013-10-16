@@ -26,7 +26,7 @@
  * </code></pre>
  * <p>That's all in your PHP code!</p>
  * <h1>How to use</h1>
- * <p>You've got two new <i>Tags</i> for Twig:</p>
+ * <p>You've got two new <i>Tags</i> and a <i>Function</i> for Twig:</p>
  * <ul>
  * <li><pre>{% asset 'path/to/asset.file' bind 'collection-name' %}</pre>: This indicates that
  * 		a template requires an asset. You can use and reuse many assets as you want and where you
@@ -37,6 +37,8 @@
  * 		specific collection ('js' and 'css' supported by default). You can control the minifing of
  * 		assets with the optional <pre>no_minify</pre> switch. For example:
  * 		<pre><code><link type="text/css" rel="stylesheet" media="all" href="path/to/public/assets/{% asset_build 'default' as 'css' %}"></code></pre></li>
+ * <li><pre>{{ asset_empty('collection-name') }}</pre>: Checks if an asset collection is empty or
+ * 		not.</li>
  * </ul>
  * <h1>How to minify</h1>
  * <p>You should use the Extension's <pre>minify</pre> option to indicate if you want to minify
@@ -147,6 +149,16 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	}
 	
 	/**
+	 * {@inheritdoc}
+	 */
+	public function getFunctions()
+	{
+		return array(
+			new Twig_SimpleFunction('asset_empty', array($this, 'isCollectionEmpty'))
+		);
+	}
+	
+	/**
 	 * @param string $type
 	 */
 	public function addAssetType($type)
@@ -208,6 +220,15 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	public function nullMinifier($content, $type)
 	{
 		return $content;
+	}
+	
+	/**
+	 * @param string $name
+	 * @return bool
+	 */
+	public function isCollectionEmpty($name)
+	{
+		return ($this->isCollectionExists($name)? ($this->getCollection($name)->getCount() > 0? false : true) : true);
 	}
 	
 	/**
