@@ -20,22 +20,32 @@
 				'storage'			=> new Assarte_TwigAssets_Storage_Filesystem(
 					$this->loader,
 					'path/to/public/assets/'
-				)
+				),
+				'name_generator_cb'	=> 'md5' // You may use any type of callbacks
 			))
 		);
  * </code></pre>
  * <p>That's all in your PHP code!</p>
  * <h1>How to use</h1>
- * <p>You've got two new <i>Tags</i> and a <i>Function</i> for Twig:</p>
+ * <p>You've got four new <i>Tags</i> and a <i>Function</i> for Twig:</p>
  * <ul>
  * <li><pre>{% asset 'path/to/asset.file' bind 'collection-name' %}</pre>: This indicates that
  * 		a template requires an asset. You can use and reuse many assets as you want and where you
  * 		want. You can bind any assets to any collections. You can name any collections as you want.
  * 		All assets in an exact collection will be unique even if you require more than once.</li>
- * <li><pre>{% asset_build 'collection-name' as 'css|js' [no_minify] %}</pre>: This indicates a
- * 		place where a collection of assets needs to be used. Here you must specify the type of the
- * 		specific collection ('js' and 'css' supported by default). You can control the minifing of
- * 		assets with the optional <pre>no_minify</pre> switch. For example:
+ * <li><pre>{% build 'collection-name' as 'css|js' [no_minify] %}...{% endbuild %}</pre>: <b>The new
+ * 		way of building a collection!</b> A <em>build</em> block's contents displayed only if collection has
+ * 		some - one at least - asset. Use the new <em>use_asset</em> tag within to display the filename of
+ * 		builded asset collection. This way is more efficent if you want optionally include a collection of
+ * 		assets based on that if it has assets or not.
+ * <li><pre>{% use_asset 'collection-name' %}</pre>: Displays an asset collection's filename within a
+ * 		<em>build</em> block.
+ * <li><pre>{% asset_build 'collection-name' as 'css|js' [no_minify] %}</pre>: <b>This is the old way
+ * 		of building and placeing a collection.</b> You should use this if you sure that the collection
+ * 		always contains one or more assets. This tag indicates a place where a collection of assets needs
+ * 		to be used. Here you must specify the type of the specific collection ('js' and 'css' supported
+ * 		by default). You can control the minifing of assets with the optional <pre>no_minify</pre> switch.
+ * 		For example:
  * 		<pre><code><link type="text/css" rel="stylesheet" media="all" href="path/to/public/assets/{% asset_build 'default' as 'css' %}"></code></pre></li>
  * <li><pre>{{ asset_empty('collection-name') }}</pre>: Checks if an asset collection is empty or
  * 		not.</li>
@@ -75,6 +85,11 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	protected $minifierCallback = null;
 	
 	/**
+	 * @var callback
+	 */
+	protected $nameGeneratorCallback = null;
+	
+	/**
 	 * Array of allowed asset types (file extensions)
 	 * @var array
 	 */
@@ -99,7 +114,8 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 			'storage'				=> null,
 			'minifing'				=> false,
 			'minifier_callback'		=> array($this, 'nullMinifier'),
-			'allowed_asset_types'	=> array('js', 'css')
+			'allowed_asset_types'	=> array('js', 'css'),
+			'name_generator_cb'		=> null
 		);
 		
 		$options = array_merge($defaults, $options);
@@ -114,6 +130,7 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 		$this->minifing = $options['minifing'];
 		$this->minifierCallback = $options['minifier_callback'];
 		$this->allowedAssetTypes = array_combine($options['allowed_asset_types'], $options['allowed_asset_types']);
+		$this->nameGeneratorCallback = $options['name_generator_cb'];
 	}
 	
 	/**
@@ -143,6 +160,8 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	public function getTokenParsers()
 	{
 		return array(
+			new Assarte_TwigAssets_TokenParser_BuildAsset(),
+			new Assarte_TwigAssets_TokenParser_UseAsset(),
 			new Assarte_TwigAssets_TokenParser_AssetBuilder(),
 			new Assarte_TwigAssets_TokenParser_Asset()
 		);
@@ -182,6 +201,7 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	public function createCollection($name)
 	{
 		$this->assetCollections[$name] = new Assarte_TwigAssets_Collection($this);
+		$this->assetCollections[$name]->setNameGeneratorCallback($this->nameGeneratorCallback);
 		return $this->assetCollections[$name];
 	}
 	
@@ -263,6 +283,23 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 			/* @var $collection Assarte_TwigAssets_Collection */
 			$assetsPlaceholders as $placeholder=>$collection
 		) {
+			while (strpos($content, '***'.$placeholder) !== false) {
+				$blockBegin = strpos($content, '***'.$placeholder);
+				$blockEnd = strpos($content, $placeholder.'***');
+				if ($blockBegin !== false and $blockEnd !== false) {
+					if ($collection->getCount() == 0) {
+						// remove complete block
+						$blockEnd += strlen($placeholder.'***');
+						$content = substr_replace($content, '', $blockBegin, $blockEnd - $blockBegin);
+					} else {
+						// remove opening and closing placeholders
+						$content = substr_replace($content, '', $blockBegin, strlen('***'.$placeholder));
+						$blockEnd = strpos($content, $placeholder.'***');
+						$content = substr_replace($content, '', $blockEnd, strlen($placeholder.'***'));
+					}
+				}
+			}
+			
 			if (strpos($content, $placeholder) !== false) {
 				$assetName = $this->namespace.$collection->getGeneratedName();
 				$assetType = $collection->getType();

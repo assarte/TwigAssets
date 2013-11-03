@@ -31,9 +31,22 @@ class Assarte_TwigAssets_Collection
 	 */
 	protected $minifiable = true;
 	
+	/**
+	 * @var callback
+	 */
+	protected $nameGeneratorCallback;
+	
 	public function __construct(Assarte_TwigAssets_Extension_Assets $extension)
 	{
 		$this->extension = $extension;
+	}
+	
+	/**
+	 * @var Assarte_TwigAssets_Extension_Assets
+	 */
+	public function getExtension()
+	{
+		return $this->extension;
 	}
 	
 	/**
@@ -62,15 +75,6 @@ class Assarte_TwigAssets_Collection
 		if (isset($this->placeholder)) return $this;
 		
 		$this->placeholder = 'x-'.uniqid().'-'.md5(uniqid()); // "x-" protects from automatic int casting
-		return $this;
-	}
-	
-	/**
-	 * @return Assarte_TwigAssets_Collection this
-	 */
-	public function dumpPlaceholder()
-	{
-		echo $this->placeholder;
 		return $this;
 	}
 	
@@ -141,6 +145,14 @@ class Assarte_TwigAssets_Collection
 		return $this;
 	}
 	
+	/**
+	 * @param callback $cb
+	 */
+	public function setNameGeneratorCallback($cb)
+	{
+		$this->nameGeneratorCallback = $cb;
+	}
+	
 	public function getGeneratedName()
 	{
 		$result = '';
@@ -155,6 +167,10 @@ class Assarte_TwigAssets_Collection
 		}
 		
 		$result = join(';', $names);
+		
+		if (is_callable($this->nameGeneratorCallback)) {
+			$result = call_user_func($this->nameGeneratorCallback, $this, $result);
+		}
 		
 		return $result;
 	}
