@@ -55,7 +55,7 @@ You've got four new *Tags* and one *Function* for Twig:
  * `{% build 'collection-name' as 'css|js' [no_minify] %}...{% endbuild %}`: **The new way of building a collection!** A `build` block's contents displayed only if collection has some - one at least - asset. Use the new `use_asset` tag within to display the filename of builded asset collection. This way is more efficent if you want optionally include a collection of assets based on that if it has assets or not. You can place a `build` block before the adding of any assets to the `build`ed collection (you cannot do this with the `if not asset_empty('collection-name')`-way)!
  * `{% use_asset 'collection-name' %}`: Displays an asset collection's filename within a `build` block. For example:
 
-```twig
+```ruby
 		{% build 'default-css' as 'css' %}
 			<link type="text/css" rel="stylesheet" media="all" href="path/to/public/assets/{% use_asset 'default-css' %}">
 		{% endbuild %}
