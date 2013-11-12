@@ -2,6 +2,7 @@ TwigAssets
 ==========
 
 Implements an on-the-fly asset manager for Twig
+
 This is a part of a light-weight framework, Prometheus: http://webapper.vallalatiszolgaltatasok.hu/#!/prometheus
 (language only in hungarian, sorry)
 
