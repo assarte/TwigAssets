@@ -54,11 +54,11 @@ You've got four new *Tags* and one *Function* for Twig:
  * `{% asset 'path/to/asset.file' bind 'collection-name' %}`: This indicates that a template requires an asset. You can use and reuse many assets as you want and where you want. You can bind any assets to any collections. You can name any collections as you want. All assets in an exact collection will be unique even if you require more than once.
  * `{% build 'collection-name' as 'css|js' [no_minify] %}...{% endbuild %}`: **The new way of building a collection!** A `build` block's contents displayed only if collection has some - one at least - asset. Use the new `use_asset` tag within to display the filename of builded asset collection. This way is more efficent if you want optionally include a collection of assets based on that if it has assets or not. You can place a `build` block before the adding of any assets to the `build`ed collection (you cannot do this with the `if not asset_empty('collection-name')`-way)!
  * `{% use_asset 'collection-name' %}`: Displays an asset collection's filename within a `build` block. For example:
-
+```twig
 		{% build 'default-css' as 'css' %}
 			<link type="text/css" rel="stylesheet" media="all" href="path/to/public/assets/{% use_asset 'default-css' %}">
 		{% endbuild %}
-
+```
  * `{% asset_build 'collection-name' as 'css|js' [no_minify] %}`: **This is the old way of building and placeing a collection.** You should use this if you sure about that the collection always contains one or more assets. This tag  indicates a place where a collection of assets needs to be used. Here you must specify the type of the specific collection (`'js'` and `'css'` supported by default). You can control the minifing of assets with the optional `no_minify` switch. For example:
 
 		<link type="text/css" rel="stylesheet" media="all" href="path/to/public/assets/{% asset_build 'default-css' as 'css' %}">
