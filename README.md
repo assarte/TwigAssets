@@ -49,7 +49,7 @@ That's all in your PHP code!
 How to use
 ----------
 
-You've got two new *Tags* and one *Function* for Twig:
+You've got four new *Tags* and one *Function* for Twig:
  * `{{ asset_empty('collection-name') }}`: This function checks if an asset collection is empty/unexistant or not. You should use it in conditional places if you not want to include noise-like empty CSS or JS files on your HTML code.
  * `{% asset 'path/to/asset.file' bind 'collection-name' %}`: This indicates that a template requires an asset. You can use and reuse many assets as you want and where you want. You can bind any assets to any collections. You can name any collections as you want. All assets in an exact collection will be unique even if you require more than once.
  * `{% build 'collection-name' as 'css|js' [no_minify] %}...{% endbuild %}`: **The new way of building a collection!** A `build` block's contents displayed only if collection has some - one at least - asset. Use the new `use_asset` tag within to display the filename of builded asset collection. This way is more efficent if you want optionally include a collection of assets based on that if it has assets or not. You can place `build` block before you add any asset to the `build`ed collection (you cannot do this with the `if not asset_empty('collection-name')`-way)!
