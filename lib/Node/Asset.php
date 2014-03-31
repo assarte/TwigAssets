@@ -1,6 +1,6 @@
 <?php
 
-class Assarte_TwigAssets_Node_Asset extends Twig_Node
+class TwigAssets_Node_Asset extends Twig_Node
 {
 	public function __construct(Twig_Node_Expression $asset, Twig_Node_Expression $collection, $lineno, $tag = null)
 	{

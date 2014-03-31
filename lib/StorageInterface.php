@@ -1,6 +1,6 @@
 <?php
 
-interface Assarte_TwigAssets_StorageInterface
+interface TwigAssets_StorageInterface
 {
 	/**
 	 * Stores a builded asset-collection on the given name

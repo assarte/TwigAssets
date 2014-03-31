@@ -3,7 +3,7 @@
 /**
  * {% build 'assetname' as 'js|css' [no_minify] %}...{% use_asset 'assetname' %}...{% endbuild %}
  */
-class Assarte_TwigAssets_TokenParser_BuildAsset extends Twig_TokenParser
+class TwigAssets_TokenParser_BuildAsset extends Twig_TokenParser
 {
 	/**
 	 * Parses a token and returns a node.
@@ -28,7 +28,7 @@ class Assarte_TwigAssets_TokenParser_BuildAsset extends Twig_TokenParser
 		$body = $this->parser->subparse(array($this, 'decideBlockEnd'), true);
 		$stream->expect(Twig_Token::BLOCK_END_TYPE);
 
-		return new Assarte_TwigAssets_Node_BuildAsset($collection, $as, $noMinify, $body, $token->getLine(), $this->getTag());
+		return new TwigAssets_Node_BuildAsset($collection, $as, $noMinify, $body, $token->getLine(), $this->getTag());
 	}
 	
 	public function decideBlockEnd(Twig_Token $token)

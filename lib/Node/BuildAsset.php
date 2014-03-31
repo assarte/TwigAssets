@@ -1,16 +1,16 @@
 <?php
 
-class Assarte_TwigAssets_Node_AssetBuilder extends Twig_Node
+class TwigAssets_Node_BuildAsset extends Twig_Node
 {
 	/**
 	 * @var bool
 	 */
 	protected $noMinify = false;
 	
-	public function __construct(Twig_Node_Expression $collection, Twig_Node_Expression $as, $noMinify = false, $lineno, $tag = null)
+	public function __construct(Twig_Node_Expression $collection, Twig_Node_Expression $as, $noMinify = false, Twig_NodeInterface $body, $lineno, $tag = null)
 	{
 		$this->noMinify = $noMinify;
-		parent::__construct(array('collection' => $collection, 'as' => $as), array(), $lineno, $tag);
+		parent::__construct(array('collection' => $collection, 'as' => $as, 'body' => $body), array(), $lineno, $tag);
 	}
 	
 	/**
@@ -31,11 +31,22 @@ class Assarte_TwigAssets_Node_AssetBuilder extends Twig_Node
 				->subcompile($this->getNode('collection'))
 			->raw('); }'."\n")
 			->write('')
-			->raw('echo $this->env->getExtension(\'assets\')->getCollection(')
+			
+			// begin placeholder block: ***placeholder
+			->raw('echo "***".$this->env->getExtension(\'assets\')->getCollection(')
 				->subcompile($this->getNode('collection'))
 			->raw(')->createPlaceholder()->setType(')
 				->subcompile($this->getNode('as'))
 			->raw(')->setMinifiable('.($this->noMinify? 'false' : 'true').')->getPlaceholder();'."\n")
+			
+			// echo body with '{% use_asset %}'
+				->subcompile($this->getNode('body'))
+			->raw(';'."\n")
+			
+			// end placeholder block: placeholder***
+			->raw('echo $this->env->getExtension(\'assets\')->getCollection(')
+				->subcompile($this->getNode('collection'))
+			->raw(')->getPlaceholder()."***";'."\n")
 		;
 	}
 }

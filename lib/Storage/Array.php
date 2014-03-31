@@ -1,6 +1,6 @@
 <?php
 
-class Assarte_TwigAssets_Storage_Array implements Assarte_TwigAssets_StorageInterface
+class TwigAssets_Storage_Array implements TwigAssets_StorageInterface
 {
 	/**
 	 * @var array

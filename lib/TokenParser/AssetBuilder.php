@@ -1,9 +1,9 @@
 <?php
 
 /**
- * {% use_asset 'assetname' %}
+ * {% asset_build 'assetname' as 'js|css' [no_minify] %}
  */
-class Assarte_TwigAssets_TokenParser_UseAsset extends Twig_TokenParser
+class TwigAssets_TokenParser_AssetBuilder extends Twig_TokenParser
 {
 	/**
 	 * Parses a token and returns a node.
@@ -16,9 +16,16 @@ class Assarte_TwigAssets_TokenParser_UseAsset extends Twig_TokenParser
 	{
 		$stream = $this->parser->getStream();
 		$collection = $this->parser->getExpressionParser()->parseExpression();
+		$stream->expect('as');
+		$as = $this->parser->getExpressionParser()->parseExpression();
+		$noMinify = false;
+        if ($stream->test(Twig_Token::NAME_TYPE, 'no_minify')) {
+            $stream->next();
+			$noMinify = true;
+        }
 		$this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
 
-		return new Assarte_TwigAssets_Node_UseAsset($collection, $token->getLine(), $this->getTag());
+		return new TwigAssets_Node_AssetBuilder($collection, $as, $noMinify, $token->getLine(), $this->getTag());
 	}
 
 	/**
@@ -28,6 +35,6 @@ class Assarte_TwigAssets_TokenParser_UseAsset extends Twig_TokenParser
 	 */
 	public function getTag()
 	{
-		return 'use_asset';
+		return 'asset_build';
 	}
 }

@@ -1,6 +1,6 @@
 <?php
 
-class Assarte_TwigAssets_Storage_Filesystem implements Assarte_TwigAssets_StorageInterface
+class TwigAssets_Storage_Filesystem implements TwigAssets_StorageInterface
 {
 	const STORE_NAMESPACE = '__store__';
 	

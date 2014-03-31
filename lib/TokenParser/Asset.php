@@ -3,7 +3,7 @@
 /**
  * {% asset 'asset-place' bind 'collection' %}
  */
-class Assarte_TwigAssets_TokenParser_Asset extends Twig_TokenParser
+class TwigAssets_TokenParser_Asset extends Twig_TokenParser
 {
 	/**
 	 * Parses a token and returns a node.
@@ -19,7 +19,7 @@ class Assarte_TwigAssets_TokenParser_Asset extends Twig_TokenParser
 		$collection = $this->parser->getExpressionParser()->parseExpression();
 		$this->parser->getStream()->expect(Twig_Token::BLOCK_END_TYPE);
 
-		return new Assarte_TwigAssets_Node_Asset($asset, $collection, $token->getLine(), $this->getTag());
+		return new TwigAssets_Node_Asset($asset, $collection, $token->getLine(), $this->getTag());
 	}
 
 	/**

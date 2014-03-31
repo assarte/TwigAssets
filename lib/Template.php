@@ -1,6 +1,6 @@
 <?php
 
-abstract class Assarte_TwigAssets_Template extends Twig_Template
+abstract class TwigAssets_Template extends Twig_Template
 {
 	public function display(array $context, array $blocks = array())
 	{

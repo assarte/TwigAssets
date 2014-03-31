@@ -3,10 +3,10 @@
 /**
  * Helper class to store and handle asset files
  */
-class Assarte_TwigAssets_Collection
+class TwigAssets_Collection
 {
 	/**
-	 * @var Assarte_TwigAssets_Extension_Assets
+	 * @var TwigAssets_Extension_Assets
 	 */
 	protected $extension;
 	
@@ -36,13 +36,13 @@ class Assarte_TwigAssets_Collection
 	 */
 	protected $nameGeneratorCallback;
 	
-	public function __construct(Assarte_TwigAssets_Extension_Assets $extension)
+	public function __construct(TwigAssets_Extension_Assets $extension)
 	{
 		$this->extension = $extension;
 	}
 	
 	/**
-	 * @var Assarte_TwigAssets_Extension_Assets
+	 * @var TwigAssets_Extension_Assets
 	 */
 	public function getExtension()
 	{
@@ -59,7 +59,7 @@ class Assarte_TwigAssets_Collection
 	
 	/**
 	 * @param string $asset
-	 * @return Assarte_TwigAssets_Collection this
+	 * @return TwigAssets_Collection this
 	 */
 	public function add($asset)
 	{
@@ -68,7 +68,7 @@ class Assarte_TwigAssets_Collection
 	}
 	
 	/**
-	 * @return Assarte_TwigAssets_Collection this
+	 * @return TwigAssets_Collection this
 	 */
 	public function createPlaceholder()
 	{
@@ -88,7 +88,7 @@ class Assarte_TwigAssets_Collection
 	
 	/**
 	 * @param string $type
-	 * @return Assarte_TwigAssets_Collection this
+	 * @return TwigAssets_Collection this
 	 */
 	public function setType($type)
 	{
@@ -105,7 +105,7 @@ class Assarte_TwigAssets_Collection
 	}
 	
 	/**
-	 * @return Assarte_TwigAssets_Collection this
+	 * @return TwigAssets_Collection this
 	 */
 	public function setMinifiable($minifiable)
 	{
@@ -137,7 +137,7 @@ class Assarte_TwigAssets_Collection
 	}
 	
 	/**
-	 * @return Assarte_TwigAssets_Collection this
+	 * @return TwigAssets_Collection this
 	 */
 	public function dumpAssets()
 	{

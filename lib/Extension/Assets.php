@@ -5,19 +5,19 @@
  * 
  * <h1>How it works</h1>
  * <p>You should change Twig's <pre>base_template_class</pre> option value to:
- * <pre>'Assarte_TwigAssets_Template'</pre>. This is highly recommended.</p>
+ * <pre>'TwigAssets_Template'</pre>. This is highly recommended.</p>
  * <pre><code>		$loader = new Twig_Loader_Filesystem('path/to/templates');
 		$env = new Twig_Environment($loader, array(
 			'cache'					=> 'path/to/compiled/sources',
-			'base_template_class'	=> 'Assarte_TwigAssets_Template'
+			'base_template_class'	=> 'TwigAssets_Template'
 		));
  * </code></pre>
  * 
- * <p>You must add the <pre>Assarte_TwigAssets_Extension_Assets</pre> extension to Twig.</p>
+ * <p>You must add the <pre>TwigAssets_Extension_Assets</pre> extension to Twig.</p>
  * <pre><code>		$env->addExtension(
-			new Assarte_TwigAssets_Extension_Assets(array(
-				'namespace'			=> Assarte_TwigAssets_Storage_Filesystem::STORE_NAMESPACE,
-				'storage'			=> new Assarte_TwigAssets_Storage_Filesystem(
+			new TwigAssets_Extension_Assets(array(
+				'namespace'			=> TwigAssets_Storage_Filesystem::STORE_NAMESPACE,
+				'storage'			=> new TwigAssets_Storage_Filesystem(
 					$this->loader,
 					'path/to/public/assets/'
 				),
@@ -57,7 +57,7 @@
  * option. The minifier callback must have two arguments: <pre>string $content, string $type</pre>.
  * This callback must returns the minified version of the passed <pre>$content</pre>'s content.</p>
  */
-class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
+class TwigAssets_Extension_Assets extends Twig_Extension
 {
 	/**
 	 * @var string
@@ -70,7 +70,7 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	protected $rebuild = true;
 	
 	/**
-	 * @var Assarte_TwigAssets_StorageInterface
+	 * @var TwigAssets_StorageInterface
 	 */
 	protected $storage;
 	
@@ -96,7 +96,13 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	protected $allowedAssetTypes = null;
 	
 	/**
-	 * Array of Assarte_TwigAssets_AssetCollection
+	 * Callback for do custom rewrites in builded asset
+	 * @var callback
+	 */
+	protected $rewriteCallback = null;
+	
+	/**
+	 * Array of TwigAssets_AssetCollection
 	 * @var array
 	 */
 	protected $assetCollections = array();
@@ -115,7 +121,8 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 			'minifing'				=> false,
 			'minifier_callback'		=> array($this, 'nullMinifier'),
 			'allowed_asset_types'	=> array('js', 'css'),
-			'name_generator_cb'		=> null
+			'name_generator_cb'		=> null,
+			'rewrite_callback'		=> null
 		);
 		
 		$options = array_merge($defaults, $options);
@@ -131,6 +138,7 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 		$this->minifierCallback = $options['minifier_callback'];
 		$this->allowedAssetTypes = array_combine($options['allowed_asset_types'], $options['allowed_asset_types']);
 		$this->nameGeneratorCallback = $options['name_generator_cb'];
+		$this->rewriteCallback = $options['rewrite_callback'];
 	}
 	
 	/**
@@ -160,10 +168,10 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	public function getTokenParsers()
 	{
 		return array(
-			new Assarte_TwigAssets_TokenParser_BuildAsset(),
-			new Assarte_TwigAssets_TokenParser_UseAsset(),
-			new Assarte_TwigAssets_TokenParser_AssetBuilder(),
-			new Assarte_TwigAssets_TokenParser_Asset()
+			new TwigAssets_TokenParser_BuildAsset(),
+			new TwigAssets_TokenParser_UseAsset(),
+			new TwigAssets_TokenParser_AssetBuilder(),
+			new TwigAssets_TokenParser_Asset()
 		);
 	}
 	
@@ -196,18 +204,18 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 	
 	/**
 	 * @param string $name
-	 * @return Assarte_TwigAssets_AssetCollection
+	 * @return TwigAssets_AssetCollection
 	 */
 	public function createCollection($name)
 	{
-		$this->assetCollections[$name] = new Assarte_TwigAssets_Collection($this);
+		$this->assetCollections[$name] = new TwigAssets_Collection($this);
 		$this->assetCollections[$name]->setNameGeneratorCallback($this->nameGeneratorCallback);
 		return $this->assetCollections[$name];
 	}
 	
 	/**
 	 * @param string $name
-	 * @return Assarte_TwigAssets_AssetCollection
+	 * @return TwigAssets_AssetCollection
 	 */
 	public function getCollection($name)
 	{
@@ -261,7 +269,7 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 		$assetsPlaceholders = array();
 		$isPlaceholderFound = false;
 		foreach (
-			/* @var $collection Assarte_TwigAssets_Collection */
+			/* @var $collection TwigAssets_Collection */
 			$this->assetCollections as $name=>$collection
 		) {
 			$assetType = $collection->getType();
@@ -280,7 +288,7 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 		if (!$isPlaceholderFound) return $content;
 		
 		foreach (
-			/* @var $collection Assarte_TwigAssets_Collection */
+			/* @var $collection TwigAssets_Collection */
 			$assetsPlaceholders as $placeholder=>$collection
 		) {
 			while (strpos($content, '***'.$placeholder) !== false) {
@@ -304,6 +312,11 @@ class Assarte_TwigAssets_Extension_Assets extends Twig_Extension
 				$assetName = $this->namespace.$collection->getGeneratedName();
 				$assetType = $collection->getType();
 				$assetBuild = $collection->renderAssets();
+				
+				// try calling rewrite
+				if ($this->rewriteCallback) {
+					$assetBuild = call_user_func($this->rewriteCallback, $assetBuild, $assetType);
+				}
 				
 				// respecting the 'no_minify' option of the 'asset_build' tag
 				if ($this->minifing and $collection->isMinifiable()) {
