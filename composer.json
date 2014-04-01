@@ -1,6 +1,6 @@
 {
 	"name": "webapper/twigassets",
-	"version": "1.0",
+	"version": "1.0.0",
 	"keywords": ["twig", "assets"],
 	"type": "library",
 	"license": "Creative Commons 4.0",
