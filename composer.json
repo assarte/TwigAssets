@@ -8,7 +8,7 @@
 		"name": "Assarte D'Raven",
 		"email": "assarte.draven@gmail.com",
 		"homepage": "http://webapper.hu"
-	}]
+	}],
 	"autoload": {
 		"psr-0": {
 			"NS_": "lib"
