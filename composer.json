@@ -1,5 +1,5 @@
 {
-	"name": "webapper/TwigAssets",
+	"name": "webapper/twigassets",
 	"version": "1.0",
 	"autoload": {
 		"PSR-0": {
