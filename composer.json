@@ -2,7 +2,7 @@
 	"name": "webapper/twigassets",
 	"version": "1.0",
 	"autoload": {
-		"PSR-0": {
+		"psr-0": {
 			"NS_": "lib"
 		}
 	}
