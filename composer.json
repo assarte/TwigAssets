@@ -1,17 +1,21 @@
 {
-	"name": "webapper/twigassets",
-	"version": "1.0.0",
-	"keywords": ["twig", "assets"],
-	"type": "library",
-	"license": "Creative Commons 4.0",
-	"authors": [{
-		"name": "Assarte D'Raven",
-		"email": "assarte.draven@gmail.com",
-		"homepage": "http://webapper.hu"
-	}],
-	"autoload": {
-		"psr-0": {
-			"TwigAssets_": "lib/"
-		}
-	}
+    "name": "assarte/twigassets",
+    "description": "TwigAssets - on-the-fly assets manager for Twig template engine",
+    "keywords": ["twig", "assets", "template"],
+    "type": "library",
+    "homepage": "https://github.com/assarte/TwigAssets",
+    "license": "CC-4.0",
+    "authors": [
+        {
+            "name": "Assarte D'Raven",
+            "homepage": "http://webapper.hu"
+        }
+    ],
+    "require": {
+        "php": ">=5.3.0",
+        "ext-json": "*"
+    },
+    "autoload": {
+        "classmap": ["lib"]
+    }
 }
