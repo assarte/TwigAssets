@@ -1,3 +1,7 @@
+# REPOSITORY CHANGES!
+
+This repository is no longer maintained, moved to https://github.com/Webapper/TwigAssets for helping my OS projects to be organized better! I apologies your inconvenience.
+
 TwigAssets
 ==========
 
